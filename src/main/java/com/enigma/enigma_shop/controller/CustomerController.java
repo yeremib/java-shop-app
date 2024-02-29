@@ -6,6 +6,9 @@ import com.enigma.enigma_shop.entity.Customer;
 import com.enigma.enigma_shop.service.CustomerService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,17 +21,19 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public Customer createNewCustomer(@RequestBody Customer customer) {
-        return customerService.create(customer);
+    public ResponseEntity<Customer> createNewCustomer(@RequestBody Customer customer) {
+        Customer customer1 = customerService.create(customer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(customer);
     }
 
     @GetMapping(path = "/{id}")
-    public Customer getCustomerById(@PathVariable String id) {
-        return customerService.getById(id);
+    public ResponseEntity<Customer> getCustomerById(@PathVariable String id) {
+        Customer customer = customerService.getById(id);
+        return ResponseEntity.ok(customer);
     }
 
     @GetMapping
-    public List<Customer> getAllCustomer( @RequestParam(name = "name", required = false) String name,
+    public ResponseEntity<List<Customer>> getAllCustomer( @RequestParam(name = "name", required = false) String name,
                                           @RequestParam(name = "mobilePhoneNo", required = false) String phoneNumber,
                                           @RequestParam(name = "birthDate", required = false) @JsonFormat(pattern = "yyyy-MM-dd") String birthDate,
                                           @RequestParam(name = "status", required = false) Boolean status
@@ -40,7 +45,8 @@ public class CustomerController {
                 .status(status)
                 .build();
 
-        return customerService.getAll(request);
+        List<Customer> customers = customerService.getAll(request);
+        return ResponseEntity.ok(customers);
     }
 
 //    @GetMapping
@@ -54,22 +60,23 @@ public class CustomerController {
 //    }
 
     @PutMapping
-    public Customer updateCustomer(@RequestBody Customer customer) {
-        return customerService.update(customer);
+    public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer) {
+        Customer customer1 = customerService.update(customer);
+        return ResponseEntity.ok(customer1);
     }
 
     @PutMapping("/{id}")
-    public String updateStatusCustomer(
+    public ResponseEntity<String> updateStatusCustomer(
             @PathVariable(name = "id") String id,
             @RequestParam(name = "status") Boolean status
     ) {
         customerService.updateStatusById(id, status);
-        return "OK";
+        return ResponseEntity.ok("Success");
     }
 
     @DeleteMapping(path = "/{id}")
-    public String deleteById(@PathVariable String id) {
+    public ResponseEntity<String> deleteById(@PathVariable String id) {
         customerService.delete(id);
-        return "Deleted";
+        return ResponseEntity.ok("Deleted");
     }
 }

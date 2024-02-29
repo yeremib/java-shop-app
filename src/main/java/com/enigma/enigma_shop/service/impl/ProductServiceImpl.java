@@ -1,10 +1,19 @@
 package com.enigma.enigma_shop.service.impl;
 
+import com.enigma.enigma_shop.dto.request.SearchProductRequest;
 import com.enigma.enigma_shop.entity.Product;
 import com.enigma.enigma_shop.repository.ProductRepository;
 import com.enigma.enigma_shop.service.ProductService;
+import com.enigma.enigma_shop.specification.ProductSpesification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.List;
@@ -25,14 +34,17 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getById(String id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isEmpty()) throw new RuntimeException("product not found");
+        if (optionalProduct.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "product not found");
         return optionalProduct.get();
-
     }
 
     @Override
-    public List<Product> getAll() {
-        return productRepository.findAll();
+    public Page<Product> getAll(SearchProductRequest request) {
+        if (request.getPage() <= 0) request.setPage(1);
+        Sort sort = Sort.by(Sort.Direction.fromString(request.getDirection()), request.getSortBy());
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
+        Specification<Product> specification = ProductSpesification.getSpecification(request);
+        return productRepository.findAll(specification, pageable);
     }
 
     @Override
