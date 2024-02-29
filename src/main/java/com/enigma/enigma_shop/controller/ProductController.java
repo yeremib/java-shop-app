@@ -1,6 +1,7 @@
 package com.enigma.enigma_shop.controller;
 
 import com.enigma.enigma_shop.constant.APIUrl;
+import com.enigma.enigma_shop.dto.request.NewProductRequest;
 import com.enigma.enigma_shop.dto.request.SearchProductRequest;
 import com.enigma.enigma_shop.dto.response.CommonResponse;
 import com.enigma.enigma_shop.dto.response.PagingResponse;
@@ -22,9 +23,9 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<CommonResponse<Product>> createNewProduct(@RequestBody Product product) {
-        Product product1 = productService.create(product);
-        CommonResponse  <Product> response = CommonResponse.<Product>builder()
+    public ResponseEntity<CommonResponse<Product>> createNewProduct(@RequestBody NewProductRequest request) {
+        Product product1 = productService.create(request);
+        CommonResponse<Product> response = CommonResponse.<Product>builder()
                 .statusCode(HttpStatus.CREATED.value())
                 .message("Successfully create new product")
                 .data(product1)

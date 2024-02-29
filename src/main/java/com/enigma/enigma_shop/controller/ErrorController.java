@@ -1,6 +1,8 @@
 package com.enigma.enigma_shop.controller;
 
 import com.enigma.enigma_shop.dto.response.CommonResponse;
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,6 +21,18 @@ public class ErrorController {
 
         return ResponseEntity
                 .status(exception.getStatusCode())
+                .body(response);
+    }
+
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<CommonResponse<?>> constrainViolationExceptionhandler(ConstraintViolationException e) {
+        CommonResponse<?> response = CommonResponse.builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
 }
