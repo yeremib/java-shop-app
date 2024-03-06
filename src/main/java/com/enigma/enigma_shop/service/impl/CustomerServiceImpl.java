@@ -1,9 +1,16 @@
 package com.enigma.enigma_shop.service.impl;
 
+import com.enigma.enigma_shop.constant.ResponseMessage;
+import com.enigma.enigma_shop.constant.UserRole;
 import com.enigma.enigma_shop.dto.request.SearchCustomerRequest;
+import com.enigma.enigma_shop.dto.request.UpdateCustomerRequest;
+import com.enigma.enigma_shop.dto.response.CustomerResponse;
 import com.enigma.enigma_shop.entity.Customer;
+import com.enigma.enigma_shop.entity.Role;
+import com.enigma.enigma_shop.entity.UserAccount;
 import com.enigma.enigma_shop.repository.CustomerRepository;
 import com.enigma.enigma_shop.service.CustomerService;
+import com.enigma.enigma_shop.service.UserService;
 import com.enigma.enigma_shop.specification.CustomerSpecification;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -11,8 +18,12 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final EntityManager entityManager;
     private final CustomerRepository customerRepository;
+    private final UserService userService;
 
     @Override
     public Customer create(Customer customer) {
@@ -118,9 +130,18 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public Customer update(Customer customer) {
-        getById(customer.getId());
-        return customerRepository.saveAndFlush(customer);
+    public CustomerResponse update(UpdateCustomerRequest request) {
+        Customer currentCustomer = findByIdOrThrowNotFound(request.getId());
+
+        currentCustomer.setName(request.getName());
+        currentCustomer.setMobilePhoneNo(request.getMobilePhoneNo());
+        currentCustomer.setAddress(request.getAddress());
+        currentCustomer.setBirthdate(Date.valueOf(request.getBirthDate()));
+
+
+        customerRepository.saveAndFlush(currentCustomer);
+        return convertCustomerToCustomerResponse(currentCustomer);
+
     }
 
     @Override
@@ -128,4 +149,16 @@ public class CustomerServiceImpl implements CustomerService {
         Customer currCustomer = getById(id);
         customerRepository.delete(currCustomer);
     }
+
+    private CustomerResponse convertCustomerToCustomerResponse(Customer customer) {
+        return CustomerResponse.builder()
+                .id(customer.getId())
+                .name(customer.getName())
+                .mobilePhoneNo(customer.getMobilePhoneNo())
+                .address(customer.getAddress())
+                .status(customer.getStatus())
+                .userAccountId(customer.getUserAccount().getId())
+                .build();
+    }
+
 }
