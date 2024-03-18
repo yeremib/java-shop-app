@@ -74,11 +74,6 @@ public class ProductController {
 
         return ResponseEntity.ok(response);
     }
-//    public List<Product> getAllProduct(
-//            @RequestParam(required = false) String name
-//    ) {
-//        return productService.getAll(name);
-//    }
 
     @PutMapping
     public ResponseEntity<Product> updateProduct(@RequestBody Product product) {

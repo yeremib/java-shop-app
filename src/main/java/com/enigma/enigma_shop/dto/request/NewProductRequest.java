@@ -10,15 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-/*
-* Anotasi validasi dari JPA/Hibernate
-* 1. @NotBlank -> validasi tidak boleh kosong termasuk whitespace, untuk string
-* 2. @NotNull -> tidak boleh null/kosong (number, object)
-* 3. @Min -> number untuk menentukan minimal angka yang harus diisi
-* 4. @Max -> number untuk menentukan maksimal angka yang harsu diisi
-* 5. @Size -> berapa panjang character pada string (parameter min & max)
-* 6. @Email -> untuk menentukan email valid atau tidak
-* */
 public class NewProductRequest {
 
     @NotBlank(message = "name is required")

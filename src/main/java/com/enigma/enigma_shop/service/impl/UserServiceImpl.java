@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     public UserAccount getByContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return userAccountRepository.findByUsername(authentication.getPrincipal().toString())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "unser not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
     }
 
 

@@ -37,8 +37,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             String bearerToken = request.getHeader(AUTH_HEADER);
             
             if (bearerToken != null && jwtService.verifyJwtToken(bearerToken)) {
-                // server akan menyimpan inforamasi user yang terverifikasi
-                // ke storage security context selama permintaan http selesai
                 JwtClaims jwtClaims = jwtService.getClaimsByToken(bearerToken);
                 UserAccount userAccount = userService.getByUserId(jwtClaims.getUserAccountId());
 
@@ -47,7 +45,6 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                         null,
                         userAccount.getAuthorities()
                 );
-                //menyimpan informasi tambahan berupa ip address dll
                 authentication.setDetails(new WebAuthenticationDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

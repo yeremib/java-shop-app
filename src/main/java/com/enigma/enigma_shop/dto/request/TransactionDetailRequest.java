@@ -2,8 +2,6 @@ package com.enigma.enigma_shop.dto.request;
 
 import lombok.*;
 
-
-
 @Getter
 @Setter
 @AllArgsConstructor

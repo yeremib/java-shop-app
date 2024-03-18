@@ -31,17 +31,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public TransactionResponse create(TransactionRequest request) {
-        // validasi customer
         Customer customer = customerService.getById(request.getCustomerId());
 
-        // 1. save transaction table
         Transaction trx = Transaction.builder()
                 .customer(customer)
                 .transDate(new Date())
                 .build();
         transactionRepository.saveAndFlush(trx);
 
-        // 2. save transaction detail table
         List<TransactionDetail> trxDetails = request.getTransactionDetails().stream().map(detailRequest -> {
             Product product = productService.getById(detailRequest.getProductId());
             if(product.getStock() - detailRequest.getQty() < 0) throw new RuntimeException("Out of Stock");

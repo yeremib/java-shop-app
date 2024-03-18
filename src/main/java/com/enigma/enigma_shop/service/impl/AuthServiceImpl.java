@@ -45,7 +45,7 @@ public class AuthServiceImpl  implements AuthService {
     private String superAdminPassword;
 
     @Transactional(rollbackFor = Exception.class)
-    @PostConstruct // berguna untuk mengeksekusi method yang akan dijalankan pada saat palikasi pertama kali dijalankan
+    @PostConstruct
     public void initSuperAdmin() {
         Optional<UserAccount> currUser = userAccountRepository.findByUsername(superAdminUsername);
         if (currUser.isPresent()) return;

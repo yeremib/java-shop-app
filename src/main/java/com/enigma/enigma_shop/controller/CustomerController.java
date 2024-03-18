@@ -25,7 +25,7 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-    private final AuthenticateUserService authenticateUserService;
+
 
     @PostMapping
     public ResponseEntity<Customer> createNewCustomer(@RequestBody Customer customer) {
@@ -44,9 +44,6 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
-    // hasAnyRole() -> multi role
-    // hasRole() -> single role
-    // bisa digunakan di atas class untuk memberlakukan atas semua method di dalam class tersebut
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Customer>> getAllCustomer( @RequestParam(name = "name", required = false) String name,
@@ -64,16 +61,6 @@ public class CustomerController {
         List<Customer> customers = customerService.getAll(request);
         return ResponseEntity.ok(customers);
     }
-
-//    @GetMapping
-//    public List<Customer> getAllCustomer(
-//            @RequestParam(name = "name", required = false) String name,
-//            @RequestParam(name = "mobilePhoneNo", required = false) String mobilePhoneNo,
-//            @RequestParam(name = "birthdate", required = false) Date birthDate,
-//            @RequestParam(name = "status", required = false) Boolean status
-//    ) {
-//        return customerService.getAll(name, mobilePhoneNo, birthDate, status);
-//    }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN') OR @authenticateUserService.hasSameId(#request)")
     @PutMapping(

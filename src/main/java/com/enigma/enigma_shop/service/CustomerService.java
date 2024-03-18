@@ -12,7 +12,6 @@ public interface CustomerService {
     Customer create(Customer customer);
     Customer getById(String id);
     List<Customer> getAll(SearchCustomerRequest request);
-    //List<Customer> getAll(String name, String mobilePhoneNo, Date birthDate, Boolean status);
     void updateStatusById(String id, Boolean status);
     CustomerResponse update(UpdateCustomerRequest request);
     void delete(String id);
